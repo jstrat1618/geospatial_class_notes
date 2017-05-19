@@ -1,0 +1,113 @@
+#Lesson 1 Notes
+Longitude specifies East to West; Lattitude specifes North to South
++ve numbers represent North or East depending on whether they are specifying Lattitude or Longitude 
+Longitudes are typically reprsented first since they reprsent East or West (like the x-axis)
+
+
+#Types of Spatial Data
+The house sales data we've been working with is an example of point data.
+There are other types of spatial data- line data, polygon data, raster data
+
+Line data is associted with a collection of points that are assumed to be joined by a line
+Polygon data is data associated with an area. Here the data is a collection of points that are assumed to be connected by lines and enclose an area.
+Raster (akagrid data) is specified with an origin and steps in the x and y axis. Data is associated with every cell in the grid.
+
+Wards are areas that roughly have equal number of people.
+
+#Drawing Polygons
+Drawing polygons can be tricky because 
+*Order Matters
+*Some areas may need more than one polygon (e.g a hole in the middle or a dividing river)
+Note some data (summary data) associated with a polygon may be repeated for points within the same polygon
+
+#Chapter 2
+#Introduction to sp objects
+
+Data frames aren't great for storing spatial data for the following reasons
+*There is no easy way to keep coordinate reference system information
+*Inefficient for complicated spatial objects (e.g. polygon data)
+*Hierarchical structure gets forced into a flat structure
+
+Features of the sp package
+*Classes for storing different types of spatial data
+*Methods for spatial objects, for manipulation
+*Useful for point, line, and polygon data
+*New spatial packages expect data in an sp object
+
+So far we've learned about the SpatialPolygons object and the SpatialPolygonsDataFrame object in the sp package
+The primary differince is the SpatialPolygonsDataFrame has an associated DataFrame (df) with it (that's why it has the extra slot in the summary[see summary(countries_sp) and summary(countries_spdf)]).
+
+sp objects are S4 classes
+S4 is one of the OO systems in R
+
+Key OO concepts
+	*class: defines a type of object, their attributes and their relationship to other classes
+	*methods: functions whose behaviour depends on the class input
+	
+S4 objects can have recursive structure, elements are called slots
+
+slots are like lists in that they can store anything but accessing different elements through slots is different
+
+S4 objects, like lists, are recursive- you can store other S4 objects in the slots of another S4 object
+
+Accessing slots
+1.) Use a dedicated methods
+	e.g. the proj4string method - see proj4string(countries_sp)
+
+2.)Use the @ symbol (kind of like using the $ sign with lists)
+	e.g. countries_sp@proj4string
+
+3.) The slot() function
+	e.g. slot(countries_sp, "proj4string")
+	
+	
+The polygon object hierarchy
+A polygon describes a single polygon
+A polygons object is made up of several polygon objects
+A SpatialPolygons object is made up of several polygons along with coordinate information
+A SpatialPolygons object is made up of a SpatialPolygons object with more data
+
+The lines hierarch in the sp package
+A line describes a single line
+A lines object is made up of several lines
+A SpatialLines object is made up of several lines along with coordinate info
+A SpatialLinesDataFrame frame is made up of a SpatialLines object with more data
+
+sp also provides a SpatialPoints object, however, the heirarch is different
+Points make up a SpatialPoints object with coordinate information
+A SpatialPointsDataFrame is made up of a SpatialPoints object with mroe data
+
+Subsetting sp objects
+Subsetting sp objects are designed to mimic to mimic subbsetting a data frame
+e.g str(countries_spdf[1,]) gives a SpatialPolygonsDataFrame but only contains the data relevant to the first country in the SpatialPolygonsDataFrame
+
+
+Introduction to tmap
+*Similar to ggplot2
+  *plot is built up in layers
+  *ggplot2 expects data in data frames while tmap expects spatial objects
+  *layers consist of a graphical representation and a mapping of visual properties to          variablss
+  
+For example
+library(tmap)
+data('Europe')
+
+tm_shape(Europe)+ #Specfifies the data without displaying it (like ggplot function)
+  tm_borders() #Add layer to draw borders of each country
+
+  
+tm_shape(Europe)+ #Specfifies the data without displaying it (like ggplot function)
+  tm_borders()+ #Add layer to draw borders of each country
+  tm_fill(col = 'part')+ #Unlike ggplot2 variables are referenced in quotes
+  tm_compass()+ #Non-data variables - just adds a compass
+  tmap_style('cobalt')
+
+other useful functions include: tm_fill(), tm_borders(), tm_polygons(), tm_bubbles(), tm_dots(), tm_lines, tm_raster(), tm_text()
+
+#Key differences between ggplot2
+*tmap has no scale_ equivalent functions to scale layers
+*tm_shape defines default data for any subsequent layers and can be called multiple times   in a single plot (unlike ggplot)
+*No need for x and y aesthetics since these are inherent in spatial objects
+*No special evaluation when mapping variables they must be quoted
+
+
