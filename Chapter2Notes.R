@@ -154,4 +154,8 @@ tm_shape(countries_spdf, projection = 'robin') +
   tm_borders(col = "burlywood4") +
   tm_style_classic()
 
+#NEXT EXCERCISE
+#Saving maps
+save_tmap(filename = 'population.png')
+save_tmap(filename = "population.html")
 

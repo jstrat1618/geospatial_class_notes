@@ -110,4 +110,69 @@ other useful functions include: tm_fill(), tm_borders(), tm_polygons(), tm_bubbl
 *No need for x and y aesthetics since these are inherent in spatial objects
 *No special evaluation when mapping variables they must be quoted
 
+#Chapter 3 Notes- The raster package
+Data frames arent great for spatial data because 
+  *No information on the coordinate reference system (CRS)
+  *Inefficient storage.
+  *Inefficient display- e.g you may end up needlessly drawing thousands of rectangles
+
+A better stucter for raster data is a matrix with information about the crid and CRS
+Sometimes there are multiple rasters with same grid but each measuring something 
+different. These are sometimes called multi-layered or multi-banned rasters. It's useful to think of these as 3-D arrays.
+
+sp has some raster data classes but raster is better because 
+  *it's easier to import rasters
+  *large rasters aren't read into memory
+  *more functionality for raster type operations
+
+The raster package also uses S4 classes. The raster package also recognizes that you are probably working the sp package and where appropriate provides the same functionality.
+
+raster provides some methods for sp objects
+This can be confusing if you are not aware of it. For example when sp is loaded and countries_spdf is printed, lots of informations is printed. On the other hand, when sp and raster are loaded and countries_spdf is printed a much more concise output is printed.
+
+
+Try it out
+library(geospatial)
+data("countries_spdf")
+library(sp)
+print(countries_spdf)
+library(raster)
+print(countries_spdf)
+
+
+Color Scales
+A perceptual color space: HCL
+  *Trichromatic- we percieve color as three-dimensional (Hue, Chroma and Luminance)
+  Hue- based on its predeominant wavelength
+    Hue is circular and unordered- there is no clear lowest or highest value
+  Chroma- describes the intensity of the color from gray to maximal intensity
+   People often refer to low chroma colors as "muddy"
+  Luminance- describes the lightness of the color
+    From black on one end to white on the other end
+  
+Both Chroma and Luminance are ordered. It's useful to change the chroma or lumninance of a color in a meaningful way in the context of our problem. Low Chroma (or more gray) is considered lower value than higher Chroma (more clear). Similarirly, low luminance (or darker) is considered lower than higher luminance (brighter color).
+
+When a palate of colors is designed to be ordered we call it sequential.
+A diverging palate is ordered but in two directions.  
+When there is no order to a palate, the palate is called Qualatative. Genrerally, it's best to use colors of the same chroma and lumina so the audience does not mistakenly believe there is an order to the colors that isn't there. 
+
+The RColorBrewer package is a helpful R package for generating color pallates. You can see all the color pallates via RColorBrewer::display.brewer.all(), you can get the hexadecimal codes using the brewer.pal function.
+The package virdisLite is similar to RColorBrewer.
+
+Mapping of numbers to color  
+*ggplot2 maps to a contintutous gradient of color
+*tmap maps to a discrete set of colors
+*Continuous map: control mapping by transforming the scale (e.g log)
+*Discrete map: control mapping by binning the variable
+
+Discrete vs Continuous Mapping
+Continuous 
+  *Perceptually uniform: percieving equivalent color difference to a numerical difference
+Disccrete
+  *Complete Control of the Scale
+  *Easier lookup  
+  
+The classInt package is useful for cutting a varaible into intervals
+  
+
 
