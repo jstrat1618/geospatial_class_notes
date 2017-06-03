@@ -17,6 +17,7 @@ Wards are areas that roughly have equal number of people.
 #Drawing Polygons
 Drawing polygons can be tricky because 
 *Order Matters
+
 *Some areas may need more than one polygon (e.g a hole in the middle or a dividing river)
 Note some data (summary data) associated with a polygon may be repeated for points within the same polygon
 
@@ -174,5 +175,67 @@ Disccrete
   
 The classInt package is useful for cutting a varaible into intervals
   
+#Chapter 4 Notes
+In this chapter we will learn 
+*Read in shape files that descibe neighborhoods and waterways
+*Match up two different coordinate systems
+*Merge data from a data frame into a SpatialPolygonsDataFrame
+*Polish a map to be publication ready
+
+Reading In a shape file
+Vector data: data described by points, lines and polygons
+Shape file is the most common format
+
+The rgdal package is very useful for reading in spatial data, especially shape files.
+The rgdal::readOGR function is useful for reading in vector formats
 
 
+Several R packages help you import spatial data into R
+The rnaturalearth package provides data from Natural Earth, a source of high resolution world maps including coastlines, states, and populated places. In fact, this was the source of the data from Chapter 2.
+The tigris package in R provides a way to easily download and import shapefiles based on US Census geographies.
+
+Coordinate Reference System
+What may come as a suprise is that there isn't one defintion of longitude and lattitude.
+To define a longitude and lattitude you need to specify an ellipoid- an approximation to the not exactly spherical earth and a datum, a position of that elipsoid relative to the earth. 
+Different choices of ellipsoid and datum lead to different that may be more convenient or accurate.
+Example: The datum=WGS84, ellps=WGS84 which is shown in the output of proj4strin(countries_spdf) is a good choice for global datasets, while datum=WGS84, ellps=WGS8 shown in the output of proj4string(water) is a good choice for for data sets in the U.S.
+
+You can also specify different projections other than longlat. For example, you'll see proj4string(nyctracts) uses the projection llc which stands lambert conformal conic
+
+If you need to move from one projection to another you cannot simply transform the coordinates, re-assigning the proj4string, won't work! You have to transform the coordinates.  Use rgdal::spTransform
+
+The process of converting from one CRS or projection to another is handled by the spTransform() methods in the rgdal package. spTransform() has methods for all sp objects including SpatialPolygonsDataFrame, but doesn't work on raster objects.
+This is because transforming a raster is a little more complicated; the transformed rectangular grid will no longer be rectangular. You can look at ?raster::projectRaster if you are curious about transforming rasters.
+
+tmap does some transformations for you, but it is good to know how to do them manually
+
+Merging spatial data with other data
+There are two ways the spatial objects (e.g. Polygons) might be matched up to the rows of the data. 
+1.)The most robust is to use IDs on the spatial objects that are matched up to row names in the data.
+2.) The other way is simply by order -- the first spatial object is assumed to correspond to the first row of data.
+
+Once created, the correspondence is based purely on order. If you manipulate the data slot, there is no checking the spatial objects still correspond to the right rows. What does this mean in practice? It's very dangerous to manipulate the data slot directly!
+
+Polishing your Map
+*Remove distractions, let data shine
+*Use spatial context
+*check legend, title, and labels for readability
+*Add Annotations
+    *Use highlighting or arrows
+    *attribute data sources
+    
+Quick overview
+#Chapter 1
+  *Types of spatial data: point, line, polygon and raster
+  *Adding context using ggmap
+#Chapter 2 & 3
+  *Spatial classes provided by raster and sp packages
+  *S4 objects
+  *Introduction to the tmap package
+  *Good choices for color palattes
+#Chapter 4
+  *Reading data
+  *Transform coordinate systems
+  *Adding data to Spatial___DataFrame Objects
+  *Polishing your map
+  
